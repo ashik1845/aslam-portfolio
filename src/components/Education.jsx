@@ -32,36 +32,43 @@ useEffect(() => {
   const sectionHeight = sectionRef.current.offsetHeight;
 
   const handleScroll = () => {
-  const scrollY = window.scrollY;
-  const windowHeight = window.innerHeight;
-  const timelineBottom = entries[entries.length - 1]
-    .querySelector('.education-icon-wrapper')
-    .getBoundingClientRect().top + window.scrollY;
+    const scrollY = window.scrollY;
+    const windowHeight = window.innerHeight;
 
-  const lineMaxHeight = timelineBottom - sectionTop - 99; 
+    const timelineBottom = entries[entries.length - 1]
+      .querySelector('.education-icon-wrapper')
+      .getBoundingClientRect().top + window.scrollY;
 
-  const progress = Math.min((scrollY + windowHeight * 0.4 - sectionTop) / sectionHeight, 1);
-  const targetHeight = Math.min(progress * sectionHeight, lineMaxHeight);
+    const lineMaxHeight = timelineBottom - sectionTop - 99;
+    const progress = Math.min((scrollY + windowHeight * 0.4 - sectionTop) / sectionHeight, 1);
+    const targetHeight = Math.min(progress * sectionHeight, lineMaxHeight);
 
-  line.style.height = `${targetHeight}px`;
+    line.style.height = `${targetHeight}px`;
 
-  entries.forEach((entry) => {
-    const iconY = entry.querySelector('.education-icon-wrapper').getBoundingClientRect().top + window.scrollY;
-    const timelineY = sectionTop + targetHeight -100;
+    entries.forEach((entry) => {
+      const iconY = entry.querySelector('.education-icon-wrapper').getBoundingClientRect().top + window.scrollY;
+      const timelineY = sectionTop + targetHeight - 100;
 
-    if (timelineY >= iconY - 100) {
-      entry.classList.add('show');
-    } else {
-      entry.classList.remove('show');
-    }
-  });
-};
+      if (timelineY >= iconY - 100) {
+        entry.classList.add('show');
+      } else {
+        entry.classList.remove('show');
+      }
+    });
+  };
 
-
-  handleScroll(); 
   window.addEventListener('scroll', handleScroll);
-  return () => window.removeEventListener('scroll', handleScroll);
+  window.addEventListener('load', handleScroll); // Trigger scroll handler after full page load
+
+  // In case fonts/images are lazy-loaded
+  setTimeout(handleScroll, 500); // Safety re-trigger
+
+  return () => {
+    window.removeEventListener('scroll', handleScroll);
+    window.removeEventListener('load', handleScroll);
+  };
 }, []);
+
 
 
   return (
