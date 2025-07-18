@@ -46,279 +46,342 @@ const Home = () => {
   }, []);
 
 useEffect(() => {
-  const robot = document.querySelector('.robot-wrapper');
-  const shadow = document.querySelector('.robot-shadow');
-  const thought = document.querySelector('.thought-bubble');
-  const thoughtText = document.querySelector('.thought-text');
-  const aboutLeft = document.querySelector('.about-left');
-  const originalParent = robot?.parentElement;
-  const rightHand = robot?.querySelector('.right-hand');
+  // Wait for DOM and images to be fully loaded
+  const initializeRobotAnimation = () => {
+    const robot = document.querySelector('.robot-wrapper');
+    const shadow = document.querySelector('.robot-shadow');
+    const thought = document.querySelector('.thought-bubble');
+    const thoughtText = document.querySelector('.thought-text');
+    const aboutLeft = document.querySelector('.about-left');
+    const originalParent = robot?.parentElement;
+    const rightHand = robot?.querySelector('.right-hand');
 
-  if (!robot || !aboutLeft || !originalParent) return;
+    if (!robot || !aboutLeft || !originalParent) {
+      // Retry after a short delay if elements aren't ready
+      setTimeout(initializeRobotAnimation, 100);
+      return;
+    }
 
-  let placed = false;
-  let isAnimating = false;
-  let animationTimeout = null;
-  let lastProgress = 0;
+    let placed = false;
+    let isAnimating = false;
+    let animationTimeout = null;
+    let lastProgress = 0;
 
-  const originalStyles = {
-    position: window.getComputedStyle(robot).position,
-    top: window.getComputedStyle(robot).top,
-    left: window.getComputedStyle(robot).left,
-    bottom: window.getComputedStyle(robot).bottom,
-    right: window.getComputedStyle(robot).right,
-    transform: window.getComputedStyle(robot).transform,
-  };
+    const originalStyles = {
+      position: window.getComputedStyle(robot).position,
+      top: window.getComputedStyle(robot).top,
+      left: window.getComputedStyle(robot).left,
+      bottom: window.getComputedStyle(robot).bottom,
+      right: window.getComputedStyle(robot).right,
+      transform: window.getComputedStyle(robot).transform,
+    };
 
-  if (window.innerWidth < 1024) {
-    gsap.set(robot, {
-      animation: 'floatUpDown 3s ease-in-out infinite',
-      position: originalStyles.position,
-      top: originalStyles.top,
-      left: originalStyles.left,
-      transform: originalStyles.transform,
-      zIndex: 10,
-    });
-    return;
-  }
-
-  const robotRect = robot.getBoundingClientRect();
-  const startStyles = {
-    position: 'fixed',
-    top: robotRect.top + 'px',
-    left: robotRect.left + 'px',
-    bottom: 'auto',
-    right: 'auto',
-    transform: 'translate(0, 0) rotate(0deg) scale(1)',
-    zIndex: 10,
-  };
-
-  gsap.set(robot, startStyles);
-
-  const updateRobotPosition = (progress, immediate = false) => {
-    const windowHeight = window.innerHeight;
-    const windowWidth = window.innerWidth;
-
-    const startTop = robotRect.top;
-    const startLeft = robotRect.left;
-    const endTop = windowHeight * 0.07;
-    const endLeft = windowWidth * 0.3;
-
-    const topValue = gsap.utils.interpolate(startTop, endTop, progress);
-    const leftValue = gsap.utils.interpolate(startLeft, endLeft, progress);
-    const rotateValue = gsap.utils.interpolate(0, 15, progress);
-    const scaleValue = gsap.utils.interpolate(1, 0.6, progress);
-    const handRotation = gsap.utils.interpolate(0, -100, progress);
-
-    if (immediate) {
+    if (window.innerWidth < 1024) {
       gsap.set(robot, {
-        top: `${topValue}px`,
-        left: `${leftValue}px`,
-        transform: `translate(0, 0) rotate(${rotateValue}deg) scale(${scaleValue})`,
+        animation: 'floatUpDown 3s ease-in-out infinite',
+        position: originalStyles.position,
+        top: originalStyles.top,
+        left: originalStyles.left,
+        transform: originalStyles.transform,
+        zIndex: 10,
       });
+      return;
+    }
 
-      if (rightHand) {
-        gsap.set(rightHand, { rotation: handRotation });
-      }
+    // Force layout recalculation
+    robot.offsetHeight;
+    
+    const robotRect = robot.getBoundingClientRect();
+    
+    // Validate rect values
+    if (robotRect.top === 0 && robotRect.left === 0 && robotRect.width === 0) {
+      // Element not properly positioned yet, retry
+      setTimeout(initializeRobotAnimation, 100);
+      return;
+    }
 
-      gsap.set([shadow, thought, thoughtText], {
-        opacity: Math.max(0, 1 - progress * 2),
-      });
-    } else {
-      gsap.to(robot, {
-        top: `${topValue}px`,
-        left: `${leftValue}px`,
-        transform: `translate(0, 0) rotate(${rotateValue}deg) scale(${scaleValue})`,
-        duration: 0.1,
-        ease: 'power2.out',
-      });
+    const startStyles = {
+      position: 'fixed',
+      top: robotRect.top + 'px',
+      left: robotRect.left + 'px',
+      bottom: 'auto',
+      right: 'auto',
+      transform: 'translate(0, 0) rotate(0deg) scale(1)',
+      zIndex: 10,
+    };
 
-      if (rightHand) {
-        gsap.to(rightHand, {
-          rotation: handRotation,
+    gsap.set(robot, startStyles);
+
+    const updateRobotPosition = (progress, immediate = false) => {
+      const windowHeight = window.innerHeight;
+      const windowWidth = window.innerWidth;
+
+      const startTop = robotRect.top;
+      const startLeft = robotRect.left;
+      const endTop = windowHeight * 0.07;
+      const endLeft = windowWidth * 0.3;
+
+      const topValue = gsap.utils.interpolate(startTop, endTop, progress);
+      const leftValue = gsap.utils.interpolate(startLeft, endLeft, progress);
+      const rotateValue = gsap.utils.interpolate(0, 15, progress);
+      const scaleValue = gsap.utils.interpolate(1, 0.6, progress);
+      const handRotation = gsap.utils.interpolate(0, -100, progress);
+
+      if (immediate) {
+        gsap.set(robot, {
+          top: `${topValue}px`,
+          left: `${leftValue}px`,
+          transform: `translate(0, 0) rotate(${rotateValue}deg) scale(${scaleValue})`,
+        });
+
+        if (rightHand) {
+          gsap.set(rightHand, { rotation: handRotation });
+        }
+
+        gsap.set([shadow, thought, thoughtText], {
+          opacity: Math.max(0, 1 - progress * 2),
+        });
+      } else {
+        gsap.to(robot, {
+          top: `${topValue}px`,
+          left: `${leftValue}px`,
+          transform: `translate(0, 0) rotate(${rotateValue}deg) scale(${scaleValue})`,
           duration: 0.1,
           ease: 'power2.out',
         });
-      }
 
-      gsap.to([shadow, thought, thoughtText], {
-        opacity: Math.max(0, 1 - progress * 2),
-        duration: 0.1,
-      });
-    }
-  };
+        if (rightHand) {
+          gsap.to(rightHand, {
+            rotation: handRotation,
+            duration: 0.1,
+            ease: 'power2.out',
+          });
+        }
 
-  ScrollTrigger.create({
-    trigger: '.about-section',
-    start: 'top 90%',
-    end: 'top 10%',
-    scrub: true,
-    onUpdate: (self) => {
-      const progress = self.progress;
-      const progressDelta = Math.abs(progress - lastProgress);
-      const isFastScroll = progressDelta > 0.1;
-
-      
-      if (animationTimeout) {
-        clearTimeout(animationTimeout);
-        animationTimeout = null;
-      }
-
-      
-      if (isFastScroll) {
-        gsap.killTweensOf([robot, rightHand, shadow, thought, thoughtText]);
-        isAnimating = false;
-      }
-
-      
-      if (progress > 0 && progress < 1) {
-        gsap.set(robot, { animation: 'none' });
-      } else if (progress === 0) {
-        gsap.set(robot, {
-          animation: 'floatUpDown 3s ease-in-out infinite',
+        gsap.to([shadow, thought, thoughtText], {
+          opacity: Math.max(0, 1 - progress * 2),
+          duration: 0.1,
         });
       }
+    };
 
-      
-      if (!placed && progress > 0 && progress < 0.99) {
-        updateRobotPosition(progress, isFastScroll);
+    // Kill any existing ScrollTriggers first
+    ScrollTrigger.getAll().forEach(trigger => {
+      if (trigger.trigger === '.about-section') {
+        trigger.kill();
       }
+    });
 
-     
-      if (progress < 0.02 && !placed) {
-        gsap.set(robot, {
-          animation: 'floatUpDown 3s ease-in-out infinite',
-        });
-      }
+    // Force ScrollTrigger to refresh
+    ScrollTrigger.refresh();
 
-     
-      if (progress >= 0.99 && !placed && !isAnimating) {
-        placed = true;
-        isAnimating = true;
+    const scrollTrigger = ScrollTrigger.create({
+      trigger: '.about-section',
+      start: 'top 90%',
+      end: 'top 10%',
+      scrub: true,
+      invalidateOnRefresh: true,
+      onUpdate: (self) => {
+        const progress = self.progress;
+        const progressDelta = Math.abs(progress - lastProgress);
+        const isFastScroll = progressDelta > 0.1;
 
-       
-        gsap.killTweensOf([robot, rightHand, shadow, thought, thoughtText]);
+        if (animationTimeout) {
+          clearTimeout(animationTimeout);
+          animationTimeout = null;
+        }
 
-        const bounds = robot.getBoundingClientRect();
-        const parentBounds = aboutLeft.getBoundingClientRect();
-        const offsetTop = bounds.top - parentBounds.top;
-        const offsetLeft = bounds.left - parentBounds.left;
-
-        aboutLeft.appendChild(robot);
-
-        gsap.set(robot, {
-          position: 'absolute',
-          top: offsetTop,
-          left: offsetLeft,
-          transform: 'translate(0, 0) rotate(15deg) scale(0.6)',
-          zIndex: 5,
-        });
-
-        gsap.to(robot, {
-          top: window.innerWidth <= 1200 ? -140 : -150,
-          left:
-            window.innerWidth <= 1100
-              ? 230
-              : window.innerWidth <= 1200
-              ? 260
-              : 300,
-          duration: 0.5,
-          ease: 'power2.out',
-          onComplete: () => {
-            isAnimating = false;
-            gsap.to([thought, thoughtText], {
-              opacity: 1,
-              duration: 0.4,
-            });
-          },
-        });
-      }
-
-      
-      if (progress < 0.95 && placed) {
-        placed = false;
-        isAnimating = true;
-
-     
-        gsap.killTweensOf([robot, rightHand, shadow, thought, thoughtText]);
-
-        gsap.set([thought, thoughtText], { opacity: 0 });
-
-        const currentBounds = robot.getBoundingClientRect();
-        
-        originalParent.appendChild(robot);
-
-        gsap.set(robot, {
-          position: 'fixed',
-          top: currentBounds.top + 'px',
-          left: currentBounds.left + 'px',
-          transform: `translate(0, 0) rotate(15deg) scale(0.6)`,
-          zIndex: 10,
-        });
-
-        
         if (isFastScroll) {
-          updateRobotPosition(progress, true);
+          gsap.killTweensOf([robot, rightHand, shadow, thought, thoughtText]);
           isAnimating = false;
-          if (progress < 0.05) {
-            gsap.set(robot, {
-              animation: 'floatUpDown 3s ease-in-out infinite',
-            });
-          }
-        } else {
-          const windowHeight = window.innerHeight;
-          const windowWidth = window.innerWidth;
-          const targetTop = gsap.utils.interpolate(robotRect.top, windowHeight * 0.07, progress);
-          const targetLeft = gsap.utils.interpolate(robotRect.left, windowWidth * 0.3, progress);
-          const targetRotate = gsap.utils.interpolate(0, 15, progress);
-          const targetScale = gsap.utils.interpolate(1, 0.6, progress);
-          const targetHandRotation = gsap.utils.interpolate(0, -100, progress);
+        }
+
+        if (progress > 0 && progress < 1) {
+          gsap.set(robot, { animation: 'none' });
+        } else if (progress === 0) {
+          gsap.set(robot, {
+            animation: 'floatUpDown 3s ease-in-out infinite',
+          });
+        }
+
+        if (!placed && progress > 0 && progress < 0.99) {
+          updateRobotPosition(progress, isFastScroll);
+        }
+
+        if (progress < 0.02 && !placed) {
+          gsap.set(robot, {
+            animation: 'floatUpDown 3s ease-in-out infinite',
+          });
+        }
+
+        if (progress >= 0.99 && !placed && !isAnimating) {
+          placed = true;
+          isAnimating = true;
+
+          gsap.killTweensOf([robot, rightHand, shadow, thought, thoughtText]);
+
+          const bounds = robot.getBoundingClientRect();
+          const parentBounds = aboutLeft.getBoundingClientRect();
+          const offsetTop = bounds.top - parentBounds.top;
+          const offsetLeft = bounds.left - parentBounds.left;
+
+          aboutLeft.appendChild(robot);
+
+          gsap.set(robot, {
+            position: 'absolute',
+            top: offsetTop,
+            left: offsetLeft,
+            transform: 'translate(0, 0) rotate(15deg) scale(0.6)',
+            zIndex: 5,
+          });
 
           gsap.to(robot, {
-            top: `${targetTop}px`,
-            left: `${targetLeft}px`,
-            transform: `translate(0, 0) rotate(${targetRotate}deg) scale(${targetScale})`,
-            duration: 0.2,
+            top: window.innerWidth <= 1200 ? -140 : -150,
+            left:
+              window.innerWidth <= 1100
+                ? 230
+                : window.innerWidth <= 1200
+                ? 260
+                : 300,
+            duration: 0.5,
             ease: 'power2.out',
             onComplete: () => {
               isAnimating = false;
-              if (progress < 0.05) {
-                gsap.set(robot, {
-                  animation: 'floatUpDown 3s ease-in-out infinite',
-                });
-              }
+              gsap.to([thought, thoughtText], {
+                opacity: 1,
+                duration: 0.4,
+              });
             },
           });
+        }
 
-          if (rightHand) {
-            gsap.to(rightHand, {
-              rotation: targetHandRotation,
+        if (progress < 0.95 && placed) {
+          placed = false;
+          isAnimating = true;
+
+          gsap.killTweensOf([robot, rightHand, shadow, thought, thoughtText]);
+
+          gsap.set([thought, thoughtText], { opacity: 0 });
+
+          const currentBounds = robot.getBoundingClientRect();
+          
+          originalParent.appendChild(robot);
+
+          gsap.set(robot, {
+            position: 'fixed',
+            top: currentBounds.top + 'px',
+            left: currentBounds.left + 'px',
+            transform: `translate(0, 0) rotate(15deg) scale(0.6)`,
+            zIndex: 10,
+          });
+
+          if (isFastScroll) {
+            updateRobotPosition(progress, true);
+            isAnimating = false;
+            if (progress < 0.05) {
+              gsap.set(robot, {
+                animation: 'floatUpDown 3s ease-in-out infinite',
+              });
+            }
+          } else {
+            const windowHeight = window.innerHeight;
+            const windowWidth = window.innerWidth;
+            const targetTop = gsap.utils.interpolate(robotRect.top, windowHeight * 0.07, progress);
+            const targetLeft = gsap.utils.interpolate(robotRect.left, windowWidth * 0.3, progress);
+            const targetRotate = gsap.utils.interpolate(0, 15, progress);
+            const targetScale = gsap.utils.interpolate(1, 0.6, progress);
+            const targetHandRotation = gsap.utils.interpolate(0, -100, progress);
+
+            gsap.to(robot, {
+              top: `${targetTop}px`,
+              left: `${targetLeft}px`,
+              transform: `translate(0, 0) rotate(${targetRotate}deg) scale(${targetScale})`,
               duration: 0.2,
               ease: 'power2.out',
+              onComplete: () => {
+                isAnimating = false;
+                if (progress < 0.05) {
+                  gsap.set(robot, {
+                    animation: 'floatUpDown 3s ease-in-out infinite',
+                  });
+                }
+              },
+            });
+
+            if (rightHand) {
+              gsap.to(rightHand, {
+                rotation: targetHandRotation,
+                duration: 0.2,
+                ease: 'power2.out',
+              });
+            }
+
+            const shadowOpacity = Math.max(0, 1 - progress * 2);
+            gsap.to([shadow, thought, thoughtText], {
+              opacity: shadowOpacity,
+              duration: 0.2,
             });
           }
-
-          const shadowOpacity = Math.max(0, 1 - progress * 2);
-          gsap.to([shadow, thought, thoughtText], {
-            opacity: shadowOpacity,
-            duration: 0.2,
-          });
         }
+
+        lastProgress = progress;
+      },
+    });
+
+    // Cleanup function
+    return () => {
+      if (animationTimeout) {
+        clearTimeout(animationTimeout);
       }
+      if (robot && originalParent && robot.parentElement !== originalParent) {
+        originalParent.appendChild(robot);
+        gsap.set(robot, originalStyles);
+      }
+      scrollTrigger.kill();
+    };
+  };
 
-      lastProgress = progress;
-    },
-  });
+  // Multiple initialization strategies
+  const init = () => {
+    // Strategy 1: Wait for images to load
+    const images = document.querySelectorAll('img');
+    const imagePromises = Array.from(images).map(img => {
+      if (img.complete) return Promise.resolve();
+      return new Promise(resolve => {
+        img.onload = resolve;
+        img.onerror = resolve; // Resolve even on error
+      });
+    });
 
+    Promise.all(imagePromises).then(() => {
+      // Wait a bit more for CSS animations to settle
+      setTimeout(() => {
+        // Force layout recalculation
+        document.body.offsetHeight;
+        
+        // Force ScrollTrigger refresh
+        ScrollTrigger.refresh();
+        
+        // Initialize the animation
+        initializeRobotAnimation();
+      }, 150);
+    });
+  };
+
+  // Strategy 2: Use multiple timing approaches
+  if (document.readyState === 'complete') {
+    init();
+  } else {
+    window.addEventListener('load', init);
+  }
+
+  // Strategy 3: Fallback timeout
+  const fallbackTimeout = setTimeout(init, 500);
+
+  // Cleanup
   return () => {
-    if (animationTimeout) {
-      clearTimeout(animationTimeout);
-    }
-    if (robot && originalParent) {
-      originalParent.appendChild(robot);
-      gsap.set(robot, originalStyles);
-    }
-    ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+    clearTimeout(fallbackTimeout);
+    window.removeEventListener('load', init);
   };
 }, []);
 
