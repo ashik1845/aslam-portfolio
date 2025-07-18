@@ -102,25 +102,39 @@ const Works = () => {
       };
     }, []);
   
-    // Mobile animation
-// Mobile animation - Replace your existing mobile useEffect with this
-useEffect(() => {
+   useEffect(() => {
   let ctx;
-
+  
   const handleResize = () => {
     const screenWidth = window.innerWidth;
     if (ctx) {
       ctx.revert();
       ctx = null;
     }
-
+    
     if (screenWidth <= 740) {
-      // Set initial positions for mobile
+      let contentY = '45vh'; // Default for larger mobile screens
+      
+      // Progressive contentY values for different screen sizes
+      if (screenWidth <= 325) contentY = '15vh';        // Very small phones
+      else if (screenWidth <= 340) contentY = '25vh';   // Small phones (iPhone SE)
+      else if (screenWidth <= 380) contentY = '35vh';   // Standard small phones
+      else if (screenWidth <= 400) contentY = '45vh';   // Medium phones
+      else if (screenWidth <= 430) contentY = '50vh';   // Large phones (iPhone 14)
+      else if (screenWidth <= 460) contentY = '53vh';   // Extra large phones
+      else if (screenWidth <= 480) contentY = '55vh';   // Small tablets portrait
+      else if (screenWidth <= 500) contentY = '58vh';   // Medium tablets portrait
+      else if (screenWidth <= 550) contentY = '60vh';   // Large tablets portrait
+      else if (screenWidth <= 600) contentY = '62vh';   // Extra large tablets
+      else if (screenWidth <= 660) contentY = '65vh';   // Small landscape tablets
+      else if (screenWidth <= 740) contentY = '68vh';   // Large landscape tablets
+      
+      // Set initial positions
       gsap.set(workcontentRef2.current, { y: 500 });
       gsap.set(workdescriptionRef1.current, { display: 'flex', opacity: 1 });
       gsap.set(workdescriptionRef2.current, { display: 'none', opacity: 0 });
       gsap.set(workdescriptionwrapper.current, { alignItems: 'flex-end' });
-
+      
       ctx = gsap.context(() => {
         const tl = gsap.timeline({
           scrollTrigger: {
@@ -128,65 +142,63 @@ useEffect(() => {
             trigger: sectionRef.current,
             start: 'top top',
             end: '+=2000',
-            scrub: 1, // Changed from true to 1 for smoother scrubbing
-            pin: sectionRef.current,
-            anticipatePin: 1, // Helps with smoother pinning
+            scrub: true,
+            pin: sectionRef.current.querySelector('.work-section'),
             onUpdate: (self) => {
-              // More precise slide tracking
-              const progress = self.progress;
-              if (progress >= 0.8) {
-                setCurrentSlide(1);
-              } else if (progress <= 0.2) {
-                setCurrentSlide(0);
-              }
+              if (self.progress >= 0.99) setCurrentSlide(1);
+              else if (self.progress <= 0.05) setCurrentSlide(0);
             },
           },
         });
-
-        // Create smoother animations with better easing
-        tl.fromTo(
-          contentRef.current, 
+        
+        tl.fromTo(contentRef.current, 
           { y: '0vh', opacity: 1 }, 
-          { y: '45vh', opacity: 1, duration: 2, ease: 'power2.inOut' }
+          { y:contentY, opacity: 1, duration: 2, ease: 'power1.out' }
         )
-        .fromTo(
-          workcontentRef.current, 
+        .fromTo(workcontentRef.current, 
           { y: 0, opacity: 1 }, 
-          { y: -500, opacity: 1, duration: 2, ease: 'power2.inOut' }, 
+          { y: -500, opacity: 1, duration: 2, ease: 'power1.out' }, 
           '<'
         )
-        .fromTo(
-          workcontentRef2.current, 
+        .fromTo(workcontentRef2.current, 
           { y: 500, opacity: 1 }, 
-          { y: 0, opacity: 1, duration: 2, ease: 'power2.inOut' }, 
+          { y: 0, opacity: 1, duration: 2, ease: 'power1.out' }, 
           '<'
         )
-        .to(
-          workdescriptionRef1.current, 
-          { opacity: 0, duration: 1, ease: 'power2.inOut' }, 
+        .to(workdescriptionRef1.current, 
+          { opacity: 0, duration: 1 }, 
           '<'
         )
-        .set(workdescriptionRef1.current, { display: 'none' }, '>')
-        .set(workdescriptionRef2.current, { display: 'flex', opacity: 0.5 }, '<')
-        .set(workdescriptionwrapper.current, { alignItems: 'flex-start' }, '<')
-        .to(
-          workdescriptionRef2.current, 
-          { opacity: 1, duration: 1, ease: 'power2.inOut' }, 
+        .set(workdescriptionRef1.current, 
+          { display: 'none' }, 
+          '>'
+        )
+        .set(workdescriptionRef2.current, 
+          { display: 'flex', opacity: 0.5 }, 
+          '<'
+        )
+        .set(workdescriptionwrapper.current, 
+          { alignItems: 'flex-start' }, 
+          '<'
+        )
+        .to(workdescriptionRef2.current, 
+          { opacity: 1, duration: 1 }, 
           '<'
         );
-
+        
+        ScrollTrigger.refresh();
       }, sectionRef);
     }
   };
-
+  
   handleResize();
   window.addEventListener('resize', handleResize);
+  
   return () => {
     if (ctx) ctx.revert();
     window.removeEventListener('resize', handleResize);
   };
 }, []);
-
   return (
     <div className="work-pin-wrapper" ref={sectionRef} id='works'>
     <div className="work-section" >
