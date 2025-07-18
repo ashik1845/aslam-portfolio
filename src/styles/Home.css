@@ -68,6 +68,8 @@ section:not(:first-child) {
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  text-decoration: none;
+   display: inline-block; 
 }
 @media (min-width: 768px) {
 .resume-button:hover {
@@ -271,6 +273,7 @@ section:not(:first-child) {
 }
 
 @media (max-width: 480px) {
+
   .intro-text {
     font-size: 22px;
   }

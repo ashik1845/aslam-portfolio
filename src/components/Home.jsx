@@ -391,7 +391,15 @@ useEffect(() => {
               Passionate about building intelligent systems that solve real-world problems. With expertise in machine
 learning, deep learning, and data science, I turn complex data into smart solutions.
             </p>
-            <button className="resume-button">View Resume</button>
+           <a
+  href="/resume.pdf"  
+  target="_blank"
+  rel="noopener noreferrer"
+  className="resume-button"
+>
+  View Resume
+</a>
+
           </div>
 
           <div className="home-image-area">
