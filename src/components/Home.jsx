@@ -399,9 +399,7 @@ learning, deep learning, and data science, I turn complex data into smart soluti
 >
   View Resume
 </a>
-
           </div>
-
           <div className="home-image-area">
   <img src={profileImg} alt="Ahmed Aslam" className="profile-bg-img" />
   <Robot showThoughtText={showThoughtText} thoughtText="Hello!" />

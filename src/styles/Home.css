@@ -194,11 +194,13 @@ section:not(:first-child) {
 }
 
 @media (max-width: 1024px) {
-
+  .home-section {
+    min-height: auto; 
+  }
   .home-content {
     flex-direction: column;
     align-items: center;
-    gap: 40px;
+    gap: 80px;
     text-align: center;
     padding: 30px 20px;
   }
@@ -471,6 +473,7 @@ section:not(:first-child) {
   .robot-wrapper {
     width: 130px;
     height: 130px;
+    
   }
 
   .thought-bubble {
