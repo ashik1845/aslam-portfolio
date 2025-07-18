@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import '../styles/Education.css';
 import timelineIcon from '../assets/timeline-icon.png';
 
@@ -24,59 +24,96 @@ B.Tech Artificial Intelligence And Data Science (GPA: 8.65 / 10.00) `,
 
 const Education = () => {
   const sectionRef = useRef(null);
+  const lineRef = useRef(null);
+  const [isLoaded, setIsLoaded] = useState(false);
 
-useEffect(() => {
-  const line = document.querySelector('.education-line');
-  const entries = document.querySelectorAll('.education-entry');
-  const sectionTop = sectionRef.current.offsetTop;
-  const sectionHeight = sectionRef.current.offsetHeight;
+  useEffect(() => {
+    // Ensure DOM is fully loaded
+    const timer = setTimeout(() => {
+      setIsLoaded(true);
+    }, 100);
 
- const handleScroll = () => {
-  const scrollY = window.scrollY;
-  const windowHeight = window.innerHeight;
+    return () => clearTimeout(timer);
+  }, []);
 
-  // Get the last icon image's bottom position
-  const lastIcon = entries[entries.length - 1].querySelector('.education-icon');
-  const timelineBottom = lastIcon.getBoundingClientRect().bottom + scrollY;
+  useEffect(() => {
+    if (!isLoaded) return;
 
-  // Use the bottom of the section as reference
-  const sectionTop = sectionRef.current.offsetTop;
-  const sectionHeight = sectionRef.current.offsetHeight;
+    const handleScroll = () => {
+      // Use refs instead of querySelector for better reliability
+      const line = lineRef.current;
+      const section = sectionRef.current;
+      
+      if (!line || !section) return;
 
-  // Calculate the maximum height the line should grow
-  const lineMaxHeight = timelineBottom - sectionTop;
+      const entries = section.querySelectorAll('.education-entry');
+      if (entries.length === 0) return;
 
-  const progress = Math.min((scrollY + windowHeight * 0.4 - sectionTop) / sectionHeight, 1);
-  const targetHeight = Math.min(progress * sectionHeight, lineMaxHeight);
+      const sectionTop = section.offsetTop;
+      const sectionHeight = section.offsetHeight;
+      const scrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
 
-  line.style.height = `${targetHeight}px`;
+      // Get the last entry's icon position
+      const lastEntry = entries[entries.length - 1];
+      const lastIcon = lastEntry.querySelector('.education-icon-wrapper');
+      
+      if (!lastIcon) return;
 
-  entries.forEach((entry) => {
-    const iconY = entry.querySelector('.education-icon-wrapper').getBoundingClientRect().top + window.scrollY;
-    const timelineY = sectionTop + targetHeight;
+      const lastIconRect = lastIcon.getBoundingClientRect();
+      const timelineBottom = lastIconRect.top + window.scrollY;
+      const lineMaxHeight = timelineBottom - sectionTop - 99;
 
-    if (timelineY >= iconY - 100) {
-      entry.classList.add('show');
-    } else {
-      entry.classList.remove('show');
-    }
-  });
-};
+      // Calculate progress with better bounds checking
+      const viewportTrigger = scrollY + windowHeight * 0.4;
+      const progress = Math.max(0, Math.min((viewportTrigger - sectionTop) / sectionHeight, 1));
+      const targetHeight = Math.max(0, Math.min(progress * sectionHeight, lineMaxHeight));
 
+      // Apply the height with requestAnimationFrame for smoother animation
+      requestAnimationFrame(() => {
+        line.style.height = `${targetHeight}px`;
+      });
 
-  window.addEventListener('scroll', handleScroll);
-  window.addEventListener('load', handleScroll); // Trigger scroll handler after full page load
+      // Handle entry visibility
+      entries.forEach((entry) => {
+        const iconWrapper = entry.querySelector('.education-icon-wrapper');
+        if (!iconWrapper) return;
 
-  // In case fonts/images are lazy-loaded
-  setTimeout(handleScroll, 500); // Safety re-trigger
+        const iconRect = iconWrapper.getBoundingClientRect();
+        const iconY = iconRect.top + window.scrollY;
+        const timelineY = sectionTop + targetHeight;
 
-  return () => {
-    window.removeEventListener('scroll', handleScroll);
-    window.removeEventListener('load', handleScroll);
-  };
-}, []);
+        if (timelineY >= iconY - 100) {
+          entry.classList.add('show');
+        } else {
+          entry.classList.remove('show');
+        }
+      });
+    };
 
+    // Initial call
+    handleScroll();
+    
+    // Add scroll listener with throttling
+    let ticking = false;
+    const throttledScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          handleScroll();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
 
+    window.addEventListener('scroll', throttledScroll, { passive: true });
+    window.addEventListener('resize', handleScroll); // Handle window resize
+
+    return () => {
+      window.removeEventListener('scroll', throttledScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, [isLoaded]);
 
   return (
     <section className="education-section" ref={sectionRef}>
@@ -86,7 +123,7 @@ useEffect(() => {
       </h2>
 
       <div className="education-timeline">
-        <div className="education-line"></div>
+        <div className="education-line" ref={lineRef}></div>
 
         {educationData.map((item, index) => (
           <div key={index} className={`education-entry ${item.position}`}>
