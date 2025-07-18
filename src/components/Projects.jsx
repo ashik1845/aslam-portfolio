@@ -29,15 +29,15 @@ const Projects = () => {
     {
       title: "Real-Time ISL Gesture Recognition & 3D Avatar System",
       icon: isDarkTheme ? ISLDark : ISL,
-      highlight: "Mediapipe / HF / LSTM / iClone (IEEE DOI: pending)",
-      hoverText: `Built a real-time ISL gesture recognition system using LSTM with 94% accuracy,
-featuring multilingual speech-to-sign translation via a 3D avatar and a modular MediaPipe–YOLO–
-Streamlit pipeline for bidirectional interaction. (IEEE (DOI: pending))`
+      highlight: "Mediapipe / HF / LSTM / iClone",
+      hoverText: ` Built a real-time ISL gesture recognition system using LSTM with 94% accuracy, 
+featuring multilingual speech-to-sign translation via a 3D avatar and a modular MediaPipe–YOLO
+Streamlit pipeline for bidirectional interaction. (IEEE (DOI: pending)) `
     },
     {
       title: "Homicide Prediction System",
       icon: isDarkTheme ? HomicideDark : Homicide,
-      highlight: "XGB / ExtraTrees / CatBoost / RandomForest (IEEE DOI: pending)",
+      highlight: "XGB / ExtraTrees / CatBoost / RandomForest ",
       hoverText: `Developed a predictive model for homicide trend analysis using geospatial and
 temporal data, leveraging ensemble techniques like XGB, ExtraTrees, and CatBoost in a stacked
 model with RandomForest as the meta-classifier, achieving 85.81% accuracy with strong precision

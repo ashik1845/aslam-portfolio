@@ -24,14 +24,16 @@ const Contact = () => {
 
          
           <div className="contact-info">
-            <div className="info-row">
-              <MdLocalPhone className="icon" />
-              <span>+91 94448 55558</span>
-            </div>
-            <div className="info-row">
-              <IoMdMail className="icon" />
-              <span> 2828aslam@gmail.com </span>
-            </div>
+  <div className="info-row">
+    <MdLocalPhone className="icon" />
+    <a href="tel:+919444855558" className="contact-link">+91 94448 55558</a>
+  </div>
+  <div className="info-row">
+    <IoMdMail className="icon" />
+    <a href="mailto:2828aslam@gmail.com" className="contact-link">2828aslam@gmail.com</a>
+  </div>
+
+
 
             
             <div className="robot-container">
