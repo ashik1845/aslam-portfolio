@@ -1,0 +1,117 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&display=swap');
+
+.skills-section {
+  padding: 60px 40px;
+   background: var(--skills-section-bg);
+  text-align: center;
+  overflow: hidden;
+}
+
+.skills-title {
+  font-size: 40px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  margin-bottom: 50px;
+  position: relative;
+  z-index: 10;
+}
+
+.highlight-dark {
+  color: var(--text-primary);
+}
+
+.highlight-brown {
+  color: #8B5E3C;
+}
+
+.skills-carousel-outer {
+  max-width: 1020px; 
+  margin: 0 auto;
+  overflow: hidden;
+  position: relative;
+}
+
+.skills-cards {
+  display: flex;
+  gap: 3rem;
+  width: max-content;
+  padding: 10px;
+}
+
+.skills {
+  position: relative;
+  overflow: hidden;
+  width: 300px;
+  height: 360px;
+   background-color: var(--skills-card-bg);
+  border-radius: 1rem;
+  padding: 20px;
+  text-align: center;
+  transition: transform 0.3s ease;
+  border: 1px solid #8B5E3C;
+  border-left: 2px solid #8B5E3C;
+  border-right: 2px solid #8B5E3C;
+  border-bottom: 4px solid #8B5E3C;
+  box-shadow:
+    -6px 0 4px -5px #8B5E3C,
+     6px 0 4px -5px #8B5E3C,
+     0 6px 6px -4px #8B5E3C;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-title {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 25px;
+ color: var(--text-primary);
+  margin-top: 10px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.card-body {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-items {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  max-width: 95%;
+}
+
+.skill-item {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 17px;
+  font-weight: 500;
+color: var(--skill-item);
+  background: var(--skills-item-bg);
+
+  border: 1px solid #8B5E3C;
+    
+  border-radius: 10px;
+  padding: 6px 14px;
+}
+
+@media(max-width:468px){
+    .skills-title{
+        font-size: 26px;
+    }
+}
+
+@media(max-width:395px){
+    .skills-section{
+        padding: 60px 35px;
+    }
+}
+@media(max-width:385px){
+    .skills-section{
+        padding: 60px 30px;
+    }
+}

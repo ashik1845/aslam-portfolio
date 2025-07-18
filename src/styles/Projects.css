@@ -1,0 +1,194 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+.project-section {
+  background-color: var(--background-color);
+  font-family: 'Montserrat', sans-serif;
+  padding: 4rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+width: 100%;
+overflow-x: hidden;
+
+  min-height: 100vh;
+  
+  justify-content:space-around;
+}
+.project-wrapper{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+width: 100%;
+    flex-wrap: wrap;
+}
+.project-header {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 3rem;
+}
+
+.project-header-span2{
+  color: #8B5E3C;
+}
+.project-header-span1{
+  color: var(--title);;
+}
+.project-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3rem;
+  justify-content: center;
+}
+
+.project-card {
+  position: relative;
+  overflow: hidden;
+  height: 360px; 
+  width: 300px;
+  background-color: var(--background-color);
+  border-radius: 1rem;
+  padding: 0;
+  text-align: left;
+  transition: transform 0.3s ease;
+  border: 1px solid #8B5E3C;
+  border-left: 2px solid #8B5E3C;
+  border-right: 2px solid #8B5E3C;
+  border-bottom: 4px solid #8B5E3C;
+  box-shadow:
+    -6px 0 4px -5px #8B5E3C,
+     6px 0 4px -5px #8B5E3C,
+     0 6px 6px -4px #8B5E3C;
+     cursor: pointer;
+   
+
+}
+.project-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: #8B5E3C; 
+  z-index: 5;
+  transform: translateY(-100%);
+  transition: transform 0.6s ease-out, opacity 0.6s ease-out;
+  opacity: 1;
+  pointer-events: none;
+}
+.project-card:hover::before,
+.project-card.clicked::before {
+  transform: translateY(100%);
+  opacity: 0;
+}
+.project-main-content,
+.project-hover-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 2rem;
+  width: 100%;
+  height: 100%;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+  box-sizing: border-box;
+}
+
+.project-main-content {
+  opacity: 1;
+  visibility: visible;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  
+}
+.project-hover-content {
+    opacity: 0;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;  
+}
+
+.project-hover-content::-webkit-scrollbar {
+  display: none; 
+}
+.project-card:hover .project-main-content {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.project-card:hover .project-hover-content {
+  opacity: 1;
+  visibility: visible;
+}
+.project-card h3 {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.project-card p {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  margin-bottom: 2rem;
+}
+
+.tools-highlight {
+  color: #8B5E3C;
+  font-weight: 500;
+}
+
+.project-icon {
+  display: flex;
+  justify-content: center;
+
+}
+
+.project-icon img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  padding: 0.5rem;
+}
+.project-title{
+  color: var(--text-primary);
+}
+.project-tools-header{
+    font-size: small;
+    font-weight: normal;
+  color: var(--text-primary);}
+
+
+@media (max-width:480px){
+  .project-header{
+    font-size: 26px;
+  }
+}
+
+@media (max-width: 768px) {
+  .project-card.active .project-main-content {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .project-card.active .project-hover-content {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .project-card::before {
+    transition: none;
+  }
+
+  .project-card.clicked::before {
+    transition: transform 0.6s ease-out, opacity 0.6s ease-out;
+  }
+}

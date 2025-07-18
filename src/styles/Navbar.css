@@ -1,0 +1,139 @@
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 80px;
+  background: transparent;
+}
+
+.navbar-left {
+  font-size: 40px;
+  font-weight: 700;
+  color: var(--navbar-text-color);
+  cursor: pointer;
+}
+
+.navbar-center {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  cursor: pointer;
+}
+
+.navbar-center span {
+  text-decoration: none;
+  color: var(--navbar-center-color);
+  font-size: 18px;
+  font-weight: 500;
+  
+}
+
+.theme-icon {
+  width: 24px;
+  height: 24px;
+  
+  cursor: pointer;
+}
+
+.talk-button {
+  background: #8B5E3C;
+background: linear-gradient(90deg, rgba(139, 94, 60, 1) 0%, rgba(37, 25, 16, 1) 100%);
+  color: #ffffff;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 20px;
+  font-weight: 500;
+  padding: 10px 35px;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+@media (min-width: 768px) {
+.talk-button:hover{
+    transform: scale(1.05);
+  background: linear-gradient(90deg, rgba(160, 105, 68, 1) 0%, rgba(58, 39, 25, 1) 100%);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+}
+
+@media (max-width: 1200px) {
+  .navbar {
+    padding: 20px 60px;
+  }
+
+  .navbar-left {
+    font-size: 34px;
+  }
+
+  .navbar-center span {
+    font-size: 17px;
+  }
+
+  .talk-button {
+    font-size: 18px;
+    padding: 8px 28px;
+  }
+
+  .theme-icon {
+    width: 22px;
+    height: 22px;
+  }
+}
+@media(max-width:1100px){
+    .navbar-left {
+    font-size: 30px;
+  }
+
+  .navbar-center span {
+    font-size: 14px;
+  }
+
+  .talk-button {
+    font-size: 15px;
+    padding: 7px 25px;
+  }
+}
+@media (max-width: 1024px) {
+  .navbar {
+    padding: 15px 20px;
+  }
+
+  .navbar-center span {
+    display: none;
+  }
+
+  .navbar-center {
+    margin-left: auto;
+    margin-right: 10px;
+  }
+
+  .theme-icon {
+    position: relative;
+    right: 0;
+    width: 24px;
+    height: 24px;
+  }
+}
+@media (max-width: 768px) {
+      .navbar-left {
+    font-size: 24px;
+  }
+
+  .theme-icon {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+     .navbar-left {
+    font-size: 20px;
+  }
+
+  .theme-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+}

@@ -1,0 +1,546 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  
+}
+html {
+  scroll-behavior: smooth;
+}
+section:not(:first-child) {
+  margin-top: -1px;
+}
+
+ 
+.home-section {
+  background-color: var(--background-color);
+  min-height: 100vh;
+  font-family: 'Montserrat', sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+.home-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 60px 80px;
+  flex: 1;
+}
+
+.home-text {
+  flex: 1;
+}
+
+.intro-text {
+  font-size: 50px;
+  font-weight: 700;
+  color: #939090;
+}
+
+.name {
+  font-size: 80px;
+  font-weight: 700;
+  color: #8B5E3C;
+  margin-top: 10px;
+}
+
+.description {
+  margin-top: 20px;
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--description-color);
+  max-width: 600px;
+  line-height: 1.5;
+}
+
+.resume-button {
+  margin-top: 30px;
+  background: linear-gradient(90deg, rgba(139, 94, 60, 1) 0%, rgba(37, 25, 16, 1) 100%);
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 500;
+  padding: 12px 35px;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+@media (min-width: 768px) {
+.resume-button:hover {
+  transform: scale(1.05);
+  background: linear-gradient(90deg, rgba(160, 105, 68, 1) 0%, rgba(58, 39, 25, 1) 100%);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+}
+
+.home-image {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.home-image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+.name {
+  font-size: 80px;
+  font-weight: 700;
+  color: #8B5E3C;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.typed {
+  font-size: inherit;
+  font-weight: inherit;
+  color: inherit;
+  white-space: nowrap;
+}
+
+.cursor {
+  font-size: inherit;
+  font-weight: 300;
+  color: var(--title);
+  animation: blink 1s infinite;
+  margin-left: 1px;
+  line-height: 1;
+}
+
+@keyframes blink {
+  0%   { opacity: 1; }
+  50%  { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.profile-bg-img {
+  position: absolute;
+  width: 300px;
+  height: auto;
+  z-index: 0;
+  top: 40%;
+  right: 21%;
+
+}
+
+@media (max-width: 1200px) {
+
+  .home-content {
+    padding: 50px 60px;
+    
+  }
+
+  .intro-text {
+    font-size: 44px;
+  }
+
+  .name {
+    font-size: 68px;
+  }
+
+  .description {
+    font-size: 18px;
+    max-width: 60%;
+  }
+
+  .resume-button {
+    font-size: 18px;
+    padding: 10px 28px;
+  }
+
+  .robot-wrapper {
+    width: 260px;
+    height: 260px;
+    padding-right: 45px;
+  }
+
+  .profile-bg-img {
+    width: 260px;
+    right: 20%;
+  }
+
+  .thought-bubble {
+    width: 180px;
+    height: 180px;
+   
+  }
+
+  .thought-text {
+    font-size: 30px;
+    top: 33%;
+    left: 23%;
+  }
+}
+
+@media(max-width:1100px){
+ 
+    .intro-text {
+    font-size: 40px;
+  }
+
+  .name {
+    font-size: 60px;
+  }
+
+}
+
+@media (max-width: 1024px) {
+
+  .home-content {
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+    text-align: center;
+    padding: 30px 20px;
+  }
+
+  .home-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+
+  .intro-text {
+    font-size: 32px;
+  }
+
+  .name {
+    font-size: 42px;
+    justify-content: center;
+  }
+
+  .description {
+    font-size: 16px;
+     justify-content: center;
+     text-align: center;
+     max-width: 60%;
+  }
+
+  .resume-button {
+    font-size: 16px;
+    padding: 10px 22px;
+  }
+  .profile-bg-img {
+    position: relative;
+    width: 200px;
+    top: auto;
+    right: auto;
+    margin-bottom: -40px;
+  }
+  .home-image-area {
+    display: flex;
+    flex-direction:row;
+    align-items: center;
+    gap: 0px;
+    padding-bottom: 70px;
+  }
+}
+@media (max-width: 768px) {
+  .intro-text {
+    font-size: 28px;
+  }
+
+  .name {
+    font-size: 36px;
+  }
+
+  .description {
+    font-size: 14px;
+    max-width: 80%;
+  }
+
+  .resume-button, .talk-button {
+    font-size: 14px;
+    padding: 8px 18px;
+  }
+
+ 
+
+  .profile-bg-img {
+    width: 160px;
+  }
+}
+
+@media (max-width: 480px) {
+  .intro-text {
+    font-size: 22px;
+  }
+
+  .name {
+    font-size: 28px;
+  }
+
+  .description {
+    font-size: 13px;
+  }
+
+  .resume-button, .talk-button {
+    font-size: 13px;
+    padding: 6px 16px;
+  }
+
+
+  .profile-bg-img {
+    width: 130px;
+  }
+
+}
+
+.robot-wrapper {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-right: 50px;
+  bottom: 50px;
+  animation: floatUpDown 3s ease-in-out infinite;
+  will-change: transform, left, top;
+}
+
+.robot-body {
+  width: 100%;
+  z-index: 2;
+}
+
+.robot-shadow {
+  position: absolute;
+  bottom: -33%;
+  width: 55%;
+  height: auto;
+  z-index: 1;
+  opacity: 0.6;
+}
+
+.robot-hand {
+  position: absolute;
+  top: 90%;
+  transform: translateY(-50%);
+  width: 85px;
+  height: auto;
+  z-index: 1;
+  transition: transform 0.3s ease-in-out;
+}
+
+.left-hand {
+  top: 90%;
+  left: -14%;
+  transform-origin: right center;
+}
+
+.robot-wrapper:hover .left-hand {
+  animation: wave 0.6s ease-in-out 2;
+}
+
+@keyframes wave {
+  0%   { transform: translateY(-50%) rotate(0deg); }
+  50%  { transform: translateY(-50%) rotate(60deg); }
+  100% { transform: translateY(-50%) rotate(0deg); }
+}
+
+.right-hand {
+  right: 50px;
+  width: 14%;
+}
+
+@keyframes floatUpDown {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.thought-bubble {
+  position: absolute;
+  top: -25%;
+  left: -65%;
+  width: 200px;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+}
+
+.thought-bubble img {
+  width: 100%;
+  height: auto;
+}
+
+.thought-text {
+  position: absolute;
+  font-size: 40px;
+  top: 30%;
+  left: 17%;
+  font-weight: bold;
+  color: var(--thought-text-color);
+  transform: rotate(-15deg);
+  font-family: 'Montserrat', sans-serif;
+}
+
+@media (max-width: 1200px) {
+  .robot-wrapper {
+    width: 260px;
+    height: 260px;
+    padding-right: 45px;
+  }
+
+  .thought-bubble {
+    width: 180px;
+    height: 180px;
+  }
+
+  .thought-text {
+    font-size: 30px;
+    top: 33%;
+    left: 23%;
+  }
+}
+
+@media (max-width: 1024px) {
+  .robot-wrapper {
+    position: relative;
+    padding: 0;
+    bottom: 0;
+    margin-top: 40px;
+    width: 180px;
+    height: 180px;
+  }
+
+  .thought-bubble {
+    width: 160px;
+    height: 160px;
+    top: -40%;
+    left: -80%;
+  }
+
+  .thought-text {
+    font-size: 26px;
+  }
+
+  .robot-hand {
+    width: 65px;
+  }
+
+  .left-hand {
+    top: 95%;
+  }
+
+  .right-hand {
+    right: 1%;
+    width: 16%;
+    top: 100%;
+  }
+
+  .robot-shadow {
+    bottom: -43%;
+    width: 55%;
+  }
+}
+
+@media (max-width: 768px) {
+  .robot-wrapper {
+    width: 160px;
+    height: 160px;
+  }
+
+  .thought-bubble {
+    width: 140px;
+    height: 140px;
+    top: -40%;
+    left: -80%;
+  }
+
+  .thought-text {
+    font-size: 23px;
+  }
+}
+
+@media (max-width: 480px) {
+  .robot-wrapper {
+    width: 130px;
+    height: 130px;
+  }
+
+  .thought-bubble {
+    width: 120px;
+    height: 120px;
+    top: -40%;
+    left: -80%;
+  }
+
+  .thought-text {
+    font-size: 19px;
+  }
+
+  .robot-hand {
+    width: 45px;
+  }
+
+  .right-hand {
+    right: 1%;
+    width: 16%;
+    top: 100%;
+  }
+}
+.robot-scale-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.robot-contact-scale {
+  transform: scale(0.6); 
+  transform-origin: center;
+  
+}
+
+.robot-wrapper {
+  animation: floatUpDown 3s ease-in-out infinite;
+}
+
+.robot-wrapper.robot-contact .thought-bubble {
+  width: 160px;
+  height: 160px;
+  top: -30%;
+  left: -40%;
+}
+
+.robot-wrapper.robot-contact .thought-text {
+  font-size: 24px;
+  top: 31%;
+  left: 16%;
+   transform: rotate(-17deg);
+}
+
+@media (max-width:1024px){
+  .robot-wrapper.robot-contact{
+    width: 220px;
+    height: 220px;
+  }
+    .robot-wrapper.robot-contact .thought-bubble {
+   
+    top: -40%;
+    left: -70%;
+  }
+}
+
+@media (max-width:480px){
+  .robot-wrapper.robot-contact .robot-hand{
+    
+    width: 65px;
+  }
+     .robot-wrapper.robot-contact .right-hand {
+    right: 1%;
+    width: 16%;
+    top: 100%;
+  }
+}

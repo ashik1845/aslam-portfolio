@@ -1,0 +1,49 @@
+body.light-theme {
+      --description-color: #0F0F10;
+  --thought-text-color: #F3EDE5;
+  --background-color: #F3EDE5;
+      --about-bg-color: #F3EDE5;
+  --about-title-color: #0F0F10;
+  --about-description-color: #0F0F10;
+  --navbar-text-color: #1E1E1E;
+  --navbar-center-color: #0F0F10;
+    --education-date-bg: #B7B7B9;
+  --education-date-color: #0F0F10;
+  --timeline-line-color: #0F0F10;
+  --edu-text-color: #0F0F10;
+   --icon-wrapper-bg: #F3EDE5;
+     --skills-section-bg: #F3EDE5;
+  --skills-card-bg: #F3EDE5;
+  --skills-item-bg: #F3EDE5;
+  --text-primary: #0F0F10; 
+  --skill-item: #0F0F10;
+  --backround-color:#F3EDE5;
+  --title: #0F0F10; 
+  --footer-background: linear-gradient(110deg, rgba(139, 94, 60, 1) 0%, rgba(243, 237, 229, 1) 100%);
+  --work-date:#B7B7B9;
+}
+
+body.dark-theme {
+      --description-color: #ffffff;
+  --thought-text-color: #8B5E3C;
+  --background-color: #0F0F10;
+      --about-bg-color: #0F0F10;
+  --about-title-color: #ffffff;
+  --about-description-color: #ffffff;
+  --navbar-text-color: #ffffff;
+  --navbar-center-color: #ffffff;
+   --education-date-bg: #1F1F1F;
+  --education-date-color: #ffffff;
+  --timeline-line-color: #ffffff;
+  --edu-text-color: #ffffff;
+  --icon-wrapper-bg: #0F0F10;
+    --skills-section-bg: #0F0F10;
+  --skills-card-bg: #0F0F10;
+  --skills-item-bg: #0F0F10;
+  --text-primary: #F3EDE5;
+  --skill-item: #fff;
+  --title: #fff;
+  --backround-color:#0F0F10;
+--footer-background: linear-gradient(90deg, rgba(139, 94, 60, 1) 0%, rgba(37, 25, 16, 1) 79%);
+--work-date:#252526;
+}
