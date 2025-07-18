@@ -31,31 +31,38 @@ useEffect(() => {
   const sectionTop = sectionRef.current.offsetTop;
   const sectionHeight = sectionRef.current.offsetHeight;
 
-  const handleScroll = () => {
-    const scrollY = window.scrollY;
-    const windowHeight = window.innerHeight;
+ const handleScroll = () => {
+  const scrollY = window.scrollY;
+  const windowHeight = window.innerHeight;
 
-    const timelineBottom = entries[entries.length - 1]
-      .querySelector('.education-icon-wrapper')
-      .getBoundingClientRect().top + window.scrollY;
+  // Get the last icon image's bottom position
+  const lastIcon = entries[entries.length - 1].querySelector('.education-icon');
+  const timelineBottom = lastIcon.getBoundingClientRect().bottom + scrollY;
 
-    const lineMaxHeight = timelineBottom - sectionTop - 99;
-    const progress = Math.min((scrollY + windowHeight * 0.4 - sectionTop) / sectionHeight, 1);
-    const targetHeight = Math.min(progress * sectionHeight, lineMaxHeight);
+  // Use the bottom of the section as reference
+  const sectionTop = sectionRef.current.offsetTop;
+  const sectionHeight = sectionRef.current.offsetHeight;
 
-    line.style.height = `${targetHeight}px`;
+  // Calculate the maximum height the line should grow
+  const lineMaxHeight = timelineBottom - sectionTop;
 
-    entries.forEach((entry) => {
-      const iconY = entry.querySelector('.education-icon-wrapper').getBoundingClientRect().top + window.scrollY;
-      const timelineY = sectionTop + targetHeight - 100;
+  const progress = Math.min((scrollY + windowHeight * 0.4 - sectionTop) / sectionHeight, 1);
+  const targetHeight = Math.min(progress * sectionHeight, lineMaxHeight);
 
-      if (timelineY >= iconY - 100) {
-        entry.classList.add('show');
-      } else {
-        entry.classList.remove('show');
-      }
-    });
-  };
+  line.style.height = `${targetHeight}px`;
+
+  entries.forEach((entry) => {
+    const iconY = entry.querySelector('.education-icon-wrapper').getBoundingClientRect().top + window.scrollY;
+    const timelineY = sectionTop + targetHeight;
+
+    if (timelineY >= iconY - 100) {
+      entry.classList.add('show');
+    } else {
+      entry.classList.remove('show');
+    }
+  });
+};
+
 
   window.addEventListener('scroll', handleScroll);
   window.addEventListener('load', handleScroll); // Trigger scroll handler after full page load
