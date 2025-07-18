@@ -47,7 +47,7 @@ useEffect(() => {
 
   entries.forEach((entry) => {
     const iconY = entry.querySelector('.education-icon-wrapper').getBoundingClientRect().top + window.scrollY;
-    const timelineY = sectionTop + targetHeight;
+    const timelineY = sectionTop + targetHeight -100;
 
     if (timelineY >= iconY - 100) {
       entry.classList.add('show');
