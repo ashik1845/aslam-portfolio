@@ -127,7 +127,7 @@ const Works = () => {
           else if (screenWidth <= 600) contentY = '32vw';
           else if (screenWidth <= 660) contentY = '28vw';
   
-          gsap.set(workcontentRef2.current, { y: 500 });
+          gsap.set(workcontentRef2.current, { y: 200 });
           gsap.set(workdescriptionRef1.current, { display: 'flex', opacity: 1 });
           gsap.set(workdescriptionRef2.current, { display: 'none', opacity: 0 });
           gsap.set(workdescriptionwrapper.current, { alignItems: 'flex-end' });
@@ -148,9 +148,9 @@ const Works = () => {
               },
             });
   
-            tl.fromTo(contentRef.current, { y: '0vw', opacity: 1 }, { y: '95vw', opacity: 1, duration: 2, ease: 'power1.out' })
-              .fromTo(workcontentRef.current, { y: 0, opacity: 1 }, { y: -500, opacity: 1, duration: 2, ease: 'power1.out' }, '<')
-              .fromTo(workcontentRef2.current, { y: 500, opacity: 1 }, { y: 0, opacity: 1, duration: 2, ease: 'power1.out' }, '<')
+            tl.fromTo(contentRef.current, { y: '0vw', opacity: 1 }, { y: contentY, opacity: 1, duration: 2, ease: 'power1.out' })
+              .fromTo(workcontentRef.current, { y: 0, opacity: 1 }, { y: -200, opacity: 1, duration: 2, ease: 'power1.out' }, '<')
+              .fromTo(workcontentRef2.current, { y: 200, opacity: 1 }, { y: 0, opacity: 1, duration: 2, ease: 'power1.out' }, '<')
               .to(workdescriptionRef1.current, { opacity: 0, duration: 1 }, '<')
               .set(workdescriptionRef1.current, { display: 'none' }, '>')
               .set(workdescriptionRef2.current, { display: 'flex', opacity: 0.5 }, '<')
