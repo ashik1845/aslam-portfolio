@@ -57,7 +57,6 @@ useEffect(() => {
     const rightHand = robot?.querySelector('.right-hand');
 
     if (!robot || !aboutLeft || !originalParent) {
-      // Retry after a short delay if elements aren't ready
       setTimeout(initializeRobotAnimation, 100);
       return;
     }
@@ -66,6 +65,7 @@ useEffect(() => {
     let isAnimating = false;
     let animationTimeout = null;
     let lastProgress = 0;
+    let robotRect = null; // Cache the original rect
 
     const originalStyles = {
       position: window.getComputedStyle(robot).position,
@@ -88,14 +88,11 @@ useEffect(() => {
       return;
     }
 
-    // Force layout recalculation
+    // Force layout recalculation and cache the rect
     robot.offsetHeight;
+    robotRect = robot.getBoundingClientRect();
     
-    const robotRect = robot.getBoundingClientRect();
-    
-    // Validate rect values
     if (robotRect.top === 0 && robotRect.left === 0 && robotRect.width === 0) {
-      // Element not properly positioned yet, retry
       setTimeout(initializeRobotAnimation, 100);
       return;
     }
@@ -165,6 +162,21 @@ useEffect(() => {
       }
     };
 
+    // Helper function to safely move robot to original parent
+    const moveToOriginalParent = (currentBounds) => {
+      if (robot.parentElement !== originalParent) {
+        originalParent.appendChild(robot);
+      }
+      
+      gsap.set(robot, {
+        position: 'fixed',
+        top: currentBounds.top + 'px',
+        left: currentBounds.left + 'px',
+        transform: `translate(0, 0) rotate(15deg) scale(0.6)`,
+        zIndex: 10,
+      });
+    };
+
     // Kill any existing ScrollTriggers first
     ScrollTrigger.getAll().forEach(trigger => {
       if (trigger.trigger === '.about-section') {
@@ -172,7 +184,6 @@ useEffect(() => {
       }
     });
 
-    // Force ScrollTrigger to refresh
     ScrollTrigger.refresh();
 
     const scrollTrigger = ScrollTrigger.create({
@@ -184,18 +195,21 @@ useEffect(() => {
       onUpdate: (self) => {
         const progress = self.progress;
         const progressDelta = Math.abs(progress - lastProgress);
-        const isFastScroll = progressDelta > 0.1;
+        const isFastScroll = progressDelta > 0.03; // More sensitive threshold
+        const isScrollingBack = progress < lastProgress;
 
         if (animationTimeout) {
           clearTimeout(animationTimeout);
           animationTimeout = null;
         }
 
+        // Kill all animations on fast scroll
         if (isFastScroll) {
           gsap.killTweensOf([robot, rightHand, shadow, thought, thoughtText]);
           isAnimating = false;
         }
 
+        // Handle animation states
         if (progress > 0 && progress < 1) {
           gsap.set(robot, { animation: 'none' });
         } else if (progress === 0) {
@@ -204,16 +218,62 @@ useEffect(() => {
           });
         }
 
-        if (!placed && progress > 0 && progress < 0.99) {
-          updateRobotPosition(progress, isFastScroll);
+        // Move robot back to original parent FIRST (when scrolling back from placed state)
+        if (progress < 0.95 && placed) {
+          placed = false;
+          isAnimating = true;
+
+          gsap.killTweensOf([robot, rightHand, shadow, thought, thoughtText]);
+          gsap.set([thought, thoughtText], { opacity: 0 });
+
+          const currentBounds = robot.getBoundingClientRect();
+          
+          // Safely move to original parent
+          moveToOriginalParent(currentBounds);
+
+          // ALWAYS update position immediately when moving back from placed state
+          updateRobotPosition(progress, true);
+          isAnimating = false;
+          
+          // Reset floating animation if near beginning
+          if (progress < 0.05) {
+            gsap.set(robot, {
+              animation: 'floatUpDown 3s ease-in-out infinite',
+            });
+          }
         }
 
+        // Main animation logic for non-placed robot
+        if (!placed && progress > 0 && progress < 0.99) {
+          // Ensure robot is in original parent during animation
+          if (robot.parentElement !== originalParent) {
+            const currentBounds = robot.getBoundingClientRect();
+            originalParent.appendChild(robot);
+            gsap.set(robot, {
+              position: 'fixed',
+              top: currentBounds.top + 'px',
+              left: currentBounds.left + 'px',
+              transform: robot.style.transform,
+              zIndex: 10,
+            });
+          }
+          
+          // ALWAYS update position for fast scroll or scrolling back
+          if (isFastScroll || isScrollingBack) {
+            updateRobotPosition(progress, true);
+          } else {
+            updateRobotPosition(progress, false);
+          }
+        }
+
+        // Reset to floating animation at beginning
         if (progress < 0.02 && !placed) {
           gsap.set(robot, {
             animation: 'floatUpDown 3s ease-in-out infinite',
           });
         }
 
+        // Place robot in about-left section
         if (progress >= 0.99 && !placed && !isAnimating) {
           placed = true;
           isAnimating = true;
@@ -255,73 +315,11 @@ useEffect(() => {
           });
         }
 
-        if (progress < 0.95 && placed) {
-          placed = false;
-          isAnimating = true;
-
-          gsap.killTweensOf([robot, rightHand, shadow, thought, thoughtText]);
-
-          gsap.set([thought, thoughtText], { opacity: 0 });
-
+        // Handle edge case: if robot gets lost, reset it
+        if (progress < 0.1 && !placed && robot.parentElement !== originalParent) {
           const currentBounds = robot.getBoundingClientRect();
-          
-          originalParent.appendChild(robot);
-
-          gsap.set(robot, {
-            position: 'fixed',
-            top: currentBounds.top + 'px',
-            left: currentBounds.left + 'px',
-            transform: `translate(0, 0) rotate(15deg) scale(0.6)`,
-            zIndex: 10,
-          });
-
-          if (isFastScroll) {
-            updateRobotPosition(progress, true);
-            isAnimating = false;
-            if (progress < 0.05) {
-              gsap.set(robot, {
-                animation: 'floatUpDown 3s ease-in-out infinite',
-              });
-            }
-          } else {
-            const windowHeight = window.innerHeight;
-            const windowWidth = window.innerWidth;
-            const targetTop = gsap.utils.interpolate(robotRect.top, windowHeight * 0.07, progress);
-            const targetLeft = gsap.utils.interpolate(robotRect.left, windowWidth * 0.3, progress);
-            const targetRotate = gsap.utils.interpolate(0, 15, progress);
-            const targetScale = gsap.utils.interpolate(1, 0.6, progress);
-            const targetHandRotation = gsap.utils.interpolate(0, -100, progress);
-
-            gsap.to(robot, {
-              top: `${targetTop}px`,
-              left: `${targetLeft}px`,
-              transform: `translate(0, 0) rotate(${targetRotate}deg) scale(${targetScale})`,
-              duration: 0.2,
-              ease: 'power2.out',
-              onComplete: () => {
-                isAnimating = false;
-                if (progress < 0.05) {
-                  gsap.set(robot, {
-                    animation: 'floatUpDown 3s ease-in-out infinite',
-                  });
-                }
-              },
-            });
-
-            if (rightHand) {
-              gsap.to(rightHand, {
-                rotation: targetHandRotation,
-                duration: 0.2,
-                ease: 'power2.out',
-              });
-            }
-
-            const shadowOpacity = Math.max(0, 1 - progress * 2);
-            gsap.to([shadow, thought, thoughtText], {
-              opacity: shadowOpacity,
-              duration: 0.2,
-            });
-          }
+          moveToOriginalParent(currentBounds);
+          updateRobotPosition(progress, true);
         }
 
         lastProgress = progress;
@@ -343,42 +341,32 @@ useEffect(() => {
 
   // Multiple initialization strategies
   const init = () => {
-    // Strategy 1: Wait for images to load
     const images = document.querySelectorAll('img');
     const imagePromises = Array.from(images).map(img => {
       if (img.complete) return Promise.resolve();
       return new Promise(resolve => {
         img.onload = resolve;
-        img.onerror = resolve; // Resolve even on error
+        img.onerror = resolve;
       });
     });
 
     Promise.all(imagePromises).then(() => {
-      // Wait a bit more for CSS animations to settle
       setTimeout(() => {
-        // Force layout recalculation
         document.body.offsetHeight;
-        
-        // Force ScrollTrigger refresh
         ScrollTrigger.refresh();
-        
-        // Initialize the animation
         initializeRobotAnimation();
       }, 150);
     });
   };
 
-  // Strategy 2: Use multiple timing approaches
   if (document.readyState === 'complete') {
     init();
   } else {
     window.addEventListener('load', init);
   }
 
-  // Strategy 3: Fallback timeout
   const fallbackTimeout = setTimeout(init, 500);
 
-  // Cleanup
   return () => {
     clearTimeout(fallbackTimeout);
     window.removeEventListener('load', init);

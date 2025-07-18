@@ -42,8 +42,14 @@ const Footer = () => {
 
       </div>
       <div className="footer-bottom">
-        <p>Designed and Developed by Mitbots</p>
-      </div>
+  <p>
+    Designed and Developed by{' '}
+    <a href="https://mitbots.in" target="_blank" rel="noopener noreferrer">
+      Mitbots
+    </a>
+  </p>
+</div>
+
     </footer>
   );
 };
