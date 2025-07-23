@@ -60,7 +60,7 @@ frontend for image uploads, emotion visualization, and chat. APIs were tested us
           start: "top top",
           end: "+=150%",
           scrub: true,
-          pin: true,
+          pin: sectionRef.current,
           pinSpacing: true,
           anticipatePin: 1,
           invalidateOnRefresh: true,
@@ -106,7 +106,8 @@ frontend for image uploads, emotion visualization, and chat. APIs were tested us
   }, []);
 
   return (
-    <section className="project-section" id="projects" ref={sectionRef}>
+    <div className="project" ref={sectionRef}>
+    <section className="project-section" id="projects">
       <h2 className="project-header gsap-project-header" ref={headerRef}>
         <span className="project-header-span1">PROJ</span>
         <span className="project-header-span2">ECTS</span>
@@ -139,6 +140,7 @@ frontend for image uploads, emotion visualization, and chat. APIs were tested us
         </div>
       </div>
     </section>
+    </div>
   );
 };
 
