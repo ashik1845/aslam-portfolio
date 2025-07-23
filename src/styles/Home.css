@@ -6,9 +6,7 @@
   box-sizing: border-box;
   
 }
-html {
-  scroll-behavior: smooth;
-}
+
 section:not(:first-child) {
   margin-top: -1px;
 }
@@ -389,6 +387,12 @@ section:not(:first-child) {
   color: var(--thought-text-color);
   transform: rotate(-15deg);
   font-family: 'Montserrat', sans-serif;
+}
+
+.robot-wrapper {
+  transform: translate3d(0, 0, 0); /* Force hardware acceleration */
+  backface-visibility: hidden; /* Prevent flickering */
+  perspective: 1000px; /* Enable 3D transforms */
 }
 
 @media (max-width: 1200px) {

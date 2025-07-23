@@ -109,58 +109,64 @@ useEffect(() => {
 
     gsap.set(robot, startStyles);
 
-    const updateRobotPosition = (progress, immediate = false) => {
-      const windowHeight = window.innerHeight;
-      const windowWidth = window.innerWidth;
+const updateRobotPosition = (progress, immediate = false) => {
+  const windowHeight = window.innerHeight;
+  const windowWidth = window.innerWidth;
 
-      const startTop = robotRect.top;
-      const startLeft = robotRect.left;
-      const endTop = windowHeight * 0.07;
-      const endLeft = windowWidth * 0.3;
+  const startTop = robotRect.top;
+  const startLeft = robotRect.left;
+  const endTop = windowHeight * 0.07;
+  const endLeft = windowWidth * 0.3;
 
-      const topValue = gsap.utils.interpolate(startTop, endTop, progress);
-      const leftValue = gsap.utils.interpolate(startLeft, endLeft, progress);
-      const rotateValue = gsap.utils.interpolate(0, 15, progress);
-      const scaleValue = gsap.utils.interpolate(1, 0.6, progress);
-      const handRotation = gsap.utils.interpolate(0, -100, progress);
+  const topValue = gsap.utils.interpolate(startTop, endTop, progress);
+  const leftValue = gsap.utils.interpolate(startLeft, endLeft, progress);
+  const rotateValue = gsap.utils.interpolate(0, 15, progress);
+  const scaleValue = gsap.utils.interpolate(1, 0.6, progress);
+  const handRotation = gsap.utils.interpolate(0, -100, progress);
 
-      if (immediate) {
-        gsap.set(robot, {
-          top: `${topValue}px`,
-          left: `${leftValue}px`,
-          transform: `translate(0, 0) rotate(${rotateValue}deg) scale(${scaleValue})`,
-        });
+  if (immediate) {
+    // Kill any existing tweens first
+    gsap.killTweensOf([robot, rightHand]);
+    
+    gsap.set(robot, {
+      top: `${topValue}px`,
+      left: `${leftValue}px`,
+      transform: `translate(0, 0) rotate(${rotateValue}deg) scale(${scaleValue})`,
+    });
 
-        if (rightHand) {
-          gsap.set(rightHand, { rotation: handRotation });
-        }
+    if (rightHand) {
+      gsap.set(rightHand, { rotation: handRotation });
+    }
 
-        gsap.set([shadow, thought, thoughtText], {
-          opacity: Math.max(0, 1 - progress * 2),
-        });
-      } else {
-        gsap.to(robot, {
-          top: `${topValue}px`,
-          left: `${leftValue}px`,
-          transform: `translate(0, 0) rotate(${rotateValue}deg) scale(${scaleValue})`,
-          duration: 0.1,
-          ease: 'power2.out',
-        });
+    gsap.set([shadow, thought, thoughtText], {
+      opacity: Math.max(0, 1 - progress * 2),
+    });
+  } else {
+    gsap.to(robot, {
+      top: `${topValue}px`,
+      left: `${leftValue}px`,
+      transform: `translate(0, 0) rotate(${rotateValue}deg) scale(${scaleValue})`,
+      duration: 0.1,
+      ease: 'power2.out',
+      overwrite: 'auto', // Automatically overwrite conflicting tweens
+    });
 
-        if (rightHand) {
-          gsap.to(rightHand, {
-            rotation: handRotation,
-            duration: 0.1,
-            ease: 'power2.out',
-          });
-        }
+    if (rightHand) {
+      gsap.to(rightHand, {
+        rotation: handRotation,
+        duration: 0.1,
+        ease: 'power2.out',
+        overwrite: 'auto',
+      });
+    }
 
-        gsap.to([shadow, thought, thoughtText], {
-          opacity: Math.max(0, 1 - progress * 2),
-          duration: 0.1,
-        });
-      }
-    };
+    gsap.to([shadow, thought, thoughtText], {
+      opacity: Math.max(0, 1 - progress * 2),
+      duration: 0.1,
+      overwrite: 'auto',
+    });
+  }
+};
 
     // Helper function to safely move robot to original parent
     const moveToOriginalParent = (currentBounds) => {
@@ -177,153 +183,181 @@ useEffect(() => {
       });
     };
 
-    // Kill any existing ScrollTriggers first
-    ScrollTrigger.getAll().forEach(trigger => {
-      if (trigger.trigger === '.about-section') {
-        trigger.kill();
-      }
-    });
+ScrollTrigger.getAll().forEach(trigger => {
+  // Only kill triggers that don't have the about-text-animation ID
+  if (trigger.vars && trigger.vars.id !== 'about-text-animation') {
+    // Check if it's targeting the about-section for robot animation
+    if (trigger.trigger && (
+      trigger.trigger.classList?.contains('about-section') ||
+      trigger.trigger === '.about-section'
+    )) {
+      trigger.kill();
+    }
+  }
+});
 
-    ScrollTrigger.refresh();
+ScrollTrigger.refresh();
 
     const scrollTrigger = ScrollTrigger.create({
+  id: 'robot-animation', // Give it a unique ID
       trigger: '.about-section',
       start: 'top 90%',
       end: 'top 10%',
       scrub: true,
       invalidateOnRefresh: true,
-      onUpdate: (self) => {
-        const progress = self.progress;
-        const progressDelta = Math.abs(progress - lastProgress);
-        const isFastScroll = progressDelta > 0.03; // More sensitive threshold
-        const isScrollingBack = progress < lastProgress;
+      // Replace the onUpdate function in your ScrollTrigger.create with this improved version:
 
-        if (animationTimeout) {
-          clearTimeout(animationTimeout);
-          animationTimeout = null;
-        }
+onUpdate: (self) => {
+  const progress = self.progress;
+  const progressDelta = Math.abs(progress - lastProgress);
+  const isFastScroll = progressDelta > 0.03;
+  const isScrollingBack = progress < lastProgress;
 
-        // Kill all animations on fast scroll
-        if (isFastScroll) {
-          gsap.killTweensOf([robot, rightHand, shadow, thought, thoughtText]);
-          isAnimating = false;
-        }
+  if (animationTimeout) {
+    clearTimeout(animationTimeout);
+    animationTimeout = null;
+  }
 
-        // Handle animation states
-        if (progress > 0 && progress < 1) {
-          gsap.set(robot, { animation: 'none' });
-        } else if (progress === 0) {
-          gsap.set(robot, {
-            animation: 'floatUpDown 3s ease-in-out infinite',
-          });
-        }
+  // Kill all animations on fast scroll
+  if (isFastScroll) {
+    gsap.killTweensOf([robot, rightHand, shadow, thought, thoughtText]);
+    isAnimating = false;
+  }
 
-        // Move robot back to original parent FIRST (when scrolling back from placed state)
-        if (progress < 0.95 && placed) {
-          placed = false;
-          isAnimating = true;
+  // Handle animation states
+  if (progress > 0 && progress < 1) {
+    gsap.set(robot, { animation: 'none' });
+  } else if (progress === 0) {
+    gsap.set(robot, {
+      animation: 'floatUpDown 3s ease-in-out infinite',
+    });
+  }
 
-          gsap.killTweensOf([robot, rightHand, shadow, thought, thoughtText]);
-          gsap.set([thought, thoughtText], { opacity: 0 });
+  // IMPROVED: Handle moving robot back from placed state
+  if (progress < 0.95 && placed) {
+    placed = false;
+    isAnimating = true;
 
-          const currentBounds = robot.getBoundingClientRect();
-          
-          // Safely move to original parent
-          moveToOriginalParent(currentBounds);
+    gsap.killTweensOf([robot, rightHand, shadow, thought, thoughtText]);
+    gsap.set([thought, thoughtText], { opacity: 0 });
 
-          // ALWAYS update position immediately when moving back from placed state
-          updateRobotPosition(progress, true);
-          isAnimating = false;
-          
-          // Reset floating animation if near beginning
-          if (progress < 0.05) {
-            gsap.set(robot, {
-              animation: 'floatUpDown 3s ease-in-out infinite',
-            });
-          }
-        }
+    const currentBounds = robot.getBoundingClientRect();
+    
+    // Move to original parent first
+    moveToOriginalParent(currentBounds);
 
-        // Main animation logic for non-placed robot
-        if (!placed && progress > 0 && progress < 0.99) {
-          // Ensure robot is in original parent during animation
-          if (robot.parentElement !== originalParent) {
-            const currentBounds = robot.getBoundingClientRect();
-            originalParent.appendChild(robot);
-            gsap.set(robot, {
-              position: 'fixed',
-              top: currentBounds.top + 'px',
-              left: currentBounds.left + 'px',
-              transform: robot.style.transform,
-              zIndex: 10,
-            });
-          }
-          
-          // ALWAYS update position for fast scroll or scrolling back
-          if (isFastScroll || isScrollingBack) {
-            updateRobotPosition(progress, true);
-          } else {
-            updateRobotPosition(progress, false);
-          }
-        }
+    // ALWAYS update position immediately when moving back from placed state
+    updateRobotPosition(progress, true);
+    
+    // Reset floating animation if near beginning
+    if (progress < 0.05) {
+      gsap.set(robot, {
+        animation: 'floatUpDown 3s ease-in-out infinite',
+      });
+    }
+    
+    isAnimating = false;
+  }
 
-        // Reset to floating animation at beginning
-        if (progress < 0.02 && !placed) {
-          gsap.set(robot, {
-            animation: 'floatUpDown 3s ease-in-out infinite',
-          });
-        }
+  // IMPROVED: Main animation logic for non-placed robot
+  if (!placed && progress > 0 && progress < 0.99) {
+    // Ensure robot is in original parent during animation
+    if (robot.parentElement !== originalParent) {
+      const currentBounds = robot.getBoundingClientRect();
+      originalParent.appendChild(robot);
+      gsap.set(robot, {
+        position: 'fixed',
+        top: currentBounds.top + 'px',
+        left: currentBounds.left + 'px',
+        transform: robot.style.transform,
+        zIndex: 10,
+      });
+    }
+    
+    // CRITICAL FIX: Always update position immediately for fast scroll OR scrolling back
+    if (isFastScroll || isScrollingBack) {
+      updateRobotPosition(progress, true);
+    } else {
+      updateRobotPosition(progress, false);
+    }
+  }
 
-        // Place robot in about-left section
-        if (progress >= 0.99 && !placed && !isAnimating) {
-          placed = true;
-          isAnimating = true;
+  // IMPROVED: Handle very beginning of scroll more reliably
+  if (progress <= 0.02 && !placed) {
+    // Ensure robot is back to original position and parent
+    if (robot.parentElement !== originalParent) {
+      const currentBounds = robot.getBoundingClientRect();
+      originalParent.appendChild(robot);
+      gsap.set(robot, {
+        position: 'fixed',
+        top: robotRect.top + 'px',
+        left: robotRect.left + 'px',
+        transform: 'translate(0, 0) rotate(0deg) scale(1)',
+        zIndex: 10,
+      });
+    }
+    
+    gsap.set(robot, {
+      animation: 'floatUpDown 3s ease-in-out infinite',
+    });
+  }
 
-          gsap.killTweensOf([robot, rightHand, shadow, thought, thoughtText]);
+  // Place robot in about-left section
+  if (progress >= 0.99 && !placed && !isAnimating) {
+    placed = true;
+    isAnimating = true;
 
-          const bounds = robot.getBoundingClientRect();
-          const parentBounds = aboutLeft.getBoundingClientRect();
-          const offsetTop = bounds.top - parentBounds.top;
-          const offsetLeft = bounds.left - parentBounds.left;
+    gsap.killTweensOf([robot, rightHand, shadow, thought, thoughtText]);
 
-          aboutLeft.appendChild(robot);
+    const bounds = robot.getBoundingClientRect();
+    const parentBounds = aboutLeft.getBoundingClientRect();
+    const offsetTop = bounds.top - parentBounds.top;
+    const offsetLeft = bounds.left - parentBounds.left;
 
-          gsap.set(robot, {
-            position: 'absolute',
-            top: offsetTop,
-            left: offsetLeft,
-            transform: 'translate(0, 0) rotate(15deg) scale(0.6)',
-            zIndex: 5,
-          });
+    aboutLeft.appendChild(robot);
 
-          gsap.to(robot, {
-            top: window.innerWidth <= 1200 ? -140 : -150,
-            left:
-              window.innerWidth <= 1100
-                ? 230
-                : window.innerWidth <= 1200
-                ? 260
-                : 300,
-            duration: 0.5,
-            ease: 'power2.out',
-            onComplete: () => {
-              isAnimating = false;
-              gsap.to([thought, thoughtText], {
-                opacity: 1,
-                duration: 0.4,
-              });
-            },
-          });
-        }
+    gsap.set(robot, {
+      position: 'absolute',
+      top: offsetTop,
+      left: offsetLeft,
+      transform: 'translate(0, 0) rotate(15deg) scale(0.6)',
+      zIndex: 5,
+    });
 
-        // Handle edge case: if robot gets lost, reset it
-        if (progress < 0.1 && !placed && robot.parentElement !== originalParent) {
-          const currentBounds = robot.getBoundingClientRect();
-          moveToOriginalParent(currentBounds);
-          updateRobotPosition(progress, true);
-        }
-
-        lastProgress = progress;
+    gsap.to(robot, {
+      top: window.innerWidth <= 1200 ? -140 : -150,
+      left:
+        window.innerWidth <= 1100
+          ? 230
+          : window.innerWidth <= 1200
+          ? 260
+          : 300,
+      duration: 0.5,
+      ease: 'power2.out',
+      onComplete: () => {
+        isAnimating = false;
+        gsap.to([thought, thoughtText], {
+          opacity: 1,
+          duration: 0.4,
+        });
       },
+    });
+  }
+
+  // IMPROVED: Handle edge cases more aggressively
+  if (progress < 0.1 && !placed && robot.parentElement !== originalParent) {
+    const currentBounds = robot.getBoundingClientRect();
+    moveToOriginalParent(currentBounds);
+    updateRobotPosition(progress, true);
+  }
+
+  // ADDITIONAL FIX: Handle fast scroll back from any position
+  if (isScrollingBack && isFastScroll && !placed) {
+    updateRobotPosition(progress, true);
+  }
+
+  lastProgress = progress;
+},
     });
 
     // Cleanup function
@@ -401,8 +435,7 @@ learning, deep learning, and data science, I turn complex data into smart soluti
 </a>
           </div>
           <div className="home-image-area">
-  <img src={profileImg} alt="Ahmed Aslam" className="profile-bg-img" />
-  <Robot showThoughtText={showThoughtText} thoughtText="Hello!" />
+
 
 </div>
 

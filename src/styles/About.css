@@ -67,6 +67,14 @@
   text-align: center;
 }
 
+.about-description .char {
+  display: inline-block;
+  color: #8B4C3C;
+  transition: color 0.3s ease;
+  white-space: pre; /* Preserve spaces and line breaks */
+}
+
+
 @media (max-width:1100px){
   .about-description {
     font-size: 16px;
