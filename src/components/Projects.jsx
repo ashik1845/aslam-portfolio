@@ -15,6 +15,7 @@ gsap.registerPlugin(ScrollTrigger);
 const Projects = () => {
   const { isDarkTheme } = useContext(ThemeContext);
   const sectionRef = useRef();
+  const sectionInnerRef = useRef();
   const headerRef = useRef();
   const cardsRef = useRef([]);
 
@@ -56,15 +57,16 @@ frontend for image uploads, emotion visualization, and chat. APIs were tested us
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
         scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top top",
-          end: "+=150%",
-          scrub: true,
-          pin: sectionRef.current,
-          pinSpacing: true,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-        },
+  trigger: sectionRef.current,
+  start: "top top",
+  end: "+=150%",
+  scrub: true,
+  pin: sectionInnerRef.current, // ⬅️ Pin only the inner section
+  pinSpacing: true,
+  anticipatePin: 1,
+  invalidateOnRefresh: true,
+},
+
       });
 
       const isMobile = window.innerWidth < 768;
@@ -107,7 +109,7 @@ frontend for image uploads, emotion visualization, and chat. APIs were tested us
 
   return (
     <div className="project" ref={sectionRef}>
-    <section className="project-section" id="projects">
+    <section className="project-section" id="projects" ref={sectionInnerRef}>
       <h2 className="project-header gsap-project-header" ref={headerRef}>
         <span className="project-header-span1">PROJ</span>
         <span className="project-header-span2">ECTS</span>
