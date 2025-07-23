@@ -26,10 +26,10 @@ const workItems = [
     image: turing,
   },
     {
-    company: 'XTROP RESEARCH',
+    company: 'XTROP Solutions',
     role: 'Research Intern',
     stipend: '(Offline)',
-    description: `Engaged in research activities focused on advanced technology solutions. Contributed to experimental setups and data analysis as part of an offline, hands-on research environment.`,
+    description: `Developed a homicide prediction system using geospatial-temporal data. Built an ensemble ML pipeline with XGBoost, ExtraTrees, CatBoost, and RandomForest, achieving 85.81% accuracy. Focused on trend analysis and scalable application.`,
     duration: 'December 2024 – January 2025',
     image: humai,
   },
