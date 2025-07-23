@@ -61,7 +61,7 @@ frontend for image uploads, emotion visualization, and chat. APIs were tested us
   start: "top top",
   end: "+=150%",
   scrub: true,
-  pin: sectionInnerRef.current, // ⬅️ Pin only the inner section
+  pin: sectionInnerRef.current,
   pinSpacing: true,
   anticipatePin: 1,
   invalidateOnRefresh: true,
